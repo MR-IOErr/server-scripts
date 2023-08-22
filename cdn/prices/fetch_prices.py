@@ -10,9 +10,22 @@ import requests
 
 
 TRACKED_COINS = [
-    'BTC', 'ETH', 'SHIB', 'DOGE', 'BABYDOGE', 'DAO', 'DAI', 'GLM', 'QNT',
-    'SNT', 'NFT', 'NMR', 'CVC', 'ILV', 'SLP', 'CVX', 'ELF', 'MDT', 'BLUR',
-    'MAGIC', 'IMX', 'FLOKI', 'TON', 'LPT', 'API3',
+    'BTC', 'ETH', 'LTC', 'XRP', 'BCH',
+    'BNB', 'EOS', 'XLM', 'ETC', 'TRX', 'DOGE',
+    'UNI', 'DAI', 'LINK', 'DOT', 'AAVE', 'ADA', 'SHIB',
+    'FTM', 'MATIC', 'AXS', 'MANA', 'SAND', 'AVAX', 'MKR',
+    'GMT', 'USDC', 'SOL', 'ATOM', 'BAT', 'GRT', 'NEAR',
+    'APE', 'CHZ', 'QNT', 'XMR', 'BUSD', 'ALGO',
+    'HBAR', 'YFI', 'SNX', 'ENJ', 'CRV',
+    'FLOW', 'WBTC', 'LDO', 'FIL', 'DYDX', 'APT', 'MASK',
+    'FLR', 'LRC', 'COMP', 'BAL', 'ENS', 'SUSHI', 'LPT',
+    'GLM', 'API3', 'ONE', 'DAO', 'CVC', 'NMR', 'STORJ',
+    'SNT', 'SLP', 'ANT', 'ZRX', 'IMX', 'EGLD', 'BLUR',
+    'T', 'CELR', 'ARB', '1INCH', 'FLOKI', 'BABYDOGE', 'NFT', 'BTT',
+    'MAGIC', 'GMX', 'TON', 'BAND', 'CVX', 'MDT', 'SSV',
+    'WLD', 'OMG',
+    'ILV', 'RDNT', 'JST',
+    'ELF',
 ]
 
 
