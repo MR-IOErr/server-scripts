@@ -16,16 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-const (
-	AWS_Access_Key = ""
-	AWS_Secret_key = ""
-	AWS_Bucket     = "nobitex-cdn"
-	AWS_S3_URL     = "s3.ir-thr-at1.arvanstorage.ir"
-	RECORD         = "binance.json"
-	DST            = "/prices/binance.json"
-	PER            = "public-read"
-)
-
 func uploadFileToArvanS3() {
 	var bucket, key string
 	var timeout time.Duration

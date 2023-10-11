@@ -1,8 +1,6 @@
 package main
 
-import (
-	"os"
-)
+import "os"
 
 func deleteDownloadedFile(file string) {
 	os.Remove(file)

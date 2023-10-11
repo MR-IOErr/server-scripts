@@ -1,4 +1,0 @@
-#!/bin/bash
-
-curl -s --request GET https://api.binance.com/api/v3/ticker/price | jq -r > binance.json
-sleep 30; curl -s --request GET https://api.binance.com/api/v3/ticker/price | jq -r > binance.json
