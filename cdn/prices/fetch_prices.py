@@ -26,6 +26,7 @@ TRACKED_COINS = [
     'WLD', 'OMG',
     'ILV', 'RDNT', 'JST',
     'ELF',
+    'NOT',
 ]
 
 
