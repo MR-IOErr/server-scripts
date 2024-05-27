@@ -1,0 +1,54 @@
+#!/bin/bash
+
+echo "Checking CDN's IPs VS Server's Firewall IPs"
+
+cdn="$(curl -sL https://www.arvancloud.ir/en/ips.txt)"
+
+fw="$(cat /etc/iptables/rules.v4 | awk '{print $4}' | awk -F '[^0-9]*' '$1' | sed '/127.\(.*\)/d')"
+
+# Fetch IP addresses from Sotoon
+CDN=()
+while IFS= read -r line; do
+  CDN+=("$line")
+done < <(echo "${cdn}")
+
+# Read IP addresses from Firewall
+FIREWALL=() 
+while IFS= read -r line; do
+  FIREWALL+=("$line")
+done < <(echo "$fw")
+
+# Compare IP addresses between CDN and Firewall
+for cdn in "${CDN[@]}"; do
+  # Check if the IP exists in Firewall
+  FOUND=false
+  for firewall in "${FIREWALL[@]}"; do
+    if [ "${cdn}" == "${firewall}" ]; then
+      FOUND=true
+      break
+    fi
+  done
+
+  if ! "$FOUND"; then
+    ssh registry-v2ray 'curl -s --data "text='$(date '+%A   %Y-%b-%d')%0A''${cdn}' has been added to CDN" --data "chat_id=-1001943212575" "https://api.telegram.org/bot6007733243:AAGqpxxnZ0Gd_W1uIJTuPxfxNGlMAFo84Z0/sendMessage"' 1>/dev/null 2>&1
+    sed -i "/.\(.*\)DROP$/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
+  fi
+done
+
+for FW in "${FIREWALL[@]}"; do
+  FOUND=false
+  for ip in "${CDN[@]}"; do
+    if [ "${FW}" == "${ip}" ]; then
+      FOUND=true
+      break
+    fi
+  done
+
+  if ! "$FOUND"; then
+    ssh registry-v2ray 'curl -s --data "text='$(date '+%A: %Y-%b-%d')%0A''${FW}' is not available in CDN" --data "chat_id=-1001943212575" "https://api.telegram.org/bot6007733243:AAGqpxxnZ0Gd_W1uIJTuPxfxNGlMAFo84Z0/sendMessage"' 1>/dev/null 2>&1
+    removable_ip=`echo "${FW}" | awk -F "/" '{print $1}'`
+    sed -i "/.\(.*\) ${removable_ip}/d" /etc/iptables/rules.v4
+  fi
+
+done
+
