@@ -5,7 +5,7 @@ cdn="$(curl -sL https://www.arvancloud.ir/en/ips.txt)"
 
 fw="$(cat /etc/iptables/rules.v4 | awk '{print $4}' | awk -F '[^0-9]*' '$1' | sed '/127.\(.*\)/d')"
 
-# Fetch IP addresses from Sotoon
+# Fetch IP addresses from Arvancloud
 CDN=()
 while IFS= read -r line; do
   CDN+=("$line")
