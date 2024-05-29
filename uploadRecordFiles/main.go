@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	srcDir   = "/home/arian/recordings/"
-	dstDir   = "/home/arian/record/"
-	videoLog = "/home/arian/record/logfile.log"
+	srcDir   = "/srv/recordings/"
+	dstDir   = "/srv/record/"
+	videoLog = "/srv/record/logfile.log"
 )
 
 func calculateHashSum(filePath string) (string, error) {
@@ -64,6 +64,8 @@ func copyFiles(src, dst string) error {
 }
 
 func main() {
+	var directoriesToRemove []string
+
 	err := filepath.Walk(srcDir,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
@@ -90,8 +92,7 @@ func main() {
 							}
 							if srcHash == dstHash {
 
-								os.RemoveAll(metaPath)
-								// fmt.Printf("File already Exist and has been removed, skipping: %s\n", metaPath)
+								fmt.Printf("File already Exist and has been removed, skipping: %s\n", metaPath)
 								return nil
 							}
 						} else {
@@ -113,13 +114,24 @@ func main() {
 
 						}
 					}
+
+					directoriesToRemove = append(directoriesToRemove, metaPath)
 				}
 
 			}
 			return err
 		})
+
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}
 
+	for _, pathsToRemove := range directoriesToRemove {
+		os.RemoveAll(pathsToRemove)
+		if err != nil {
+			fmt.Printf("Error removing directory %s: %v\n", pathsToRemove, err)
+		} else {
+			fmt.Printf("Removed directory: %s\n", pathsToRemove)
+		}
+	}
 }
