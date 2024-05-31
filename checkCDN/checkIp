@@ -17,6 +17,10 @@ while IFS= read -r line; do
   FIREWALL+=("$line")
 done < <(echo "$fw")
 
+# Counters to track changes
+ADD_COUNTER=0
+REMOVE_COUNTER=0
+
 # Compare IP addresses between CDN and Firewall
 for cdn in "${CDN[@]}"; do
   # Check if the IP exists in Firewall
@@ -29,8 +33,9 @@ for cdn in "${CDN[@]}"; do
   done
 
   if ! "$FOUND"; then
-    echo "added: '$(date '+%A   %Y-%b-%d')' - '${cdn}' " >> /var/www/cdn.log
+    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed \", \"IP\": \"${cdn}\", \"CDN-Status\": \"Added To CDN\", \"Server-Status\": \"Add To Firewall\"}"
     sed -i "/.\(.*\)DROP$/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
+    ADD_COUNTER=$((ADD_COUNTER+1))
   fi
 done
 
@@ -44,9 +49,23 @@ for FW in "${FIREWALL[@]}"; do
   done
 
   if ! "$FOUND"; then
-    echo "removed: '$(date '+%A: %Y-%b-%d')' - '${FW}' " >> /var/www/cdn.log
+    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed\", \"IP\": \"${FW}\", \"CDN-Status\": \"Removed From CDN\", \"Server-Status\": \"Remove From Firewall\"}"
     removable_ip=`echo "${FW}" | awk -F "/" '{print $1}'`
     sed -i "/.\(.*\) ${removable_ip}/d" /etc/iptables/rules.v4
+    REMOVE_COUNTER=$((REMOVE_COUNTER+1))
   fi
 done
-echo "================================================================" >> /var/www/cdn.log
+
+# If any changes were made, restart iptables
+
+if [ $ADD_COUNTER -gt 0 ] || [ $REMOVE_COUNTER -gt 0 ]; then
+
+  echo "Changes detected. Restarting iptables service."
+
+  iptables-restore < /etc/iptables/rules.v4
+
+else
+
+  echo "No changes in iptables rules. No action taken."
+
+fi
