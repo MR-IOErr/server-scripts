@@ -5,6 +5,8 @@ cdn="$(curl -sL https://www.arvancloud.ir/en/ips.txt)"
 
 fw="$(cat /etc/iptables/rules.v4 | awk '{print $4}' | awk -F '[^0-9]*' '$1' | sed '/127.\(.*\)/d')"
 
+date=$(date +"%a %b %d %I:%M:%S %Y")
+
 # Fetch IP addresses from Arvancloud
 CDN=()
 while IFS= read -r line; do
@@ -33,7 +35,7 @@ for cdn in "${CDN[@]}"; do
   done
 
   if ! "$FOUND"; then
-    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed \", \"IP\": \"${cdn}\", \"CDN-Status\": \"Added To CDN\", \"Server-Status\": \"Add To Firewall\"}"
+    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed \", \"IP\": \"${cdn}\", \"CDN-Status\": \"Added To CDN\", \"Server-Status\": \"Add To Firewall\", \"Hostname\": \"${HOSTNAME}\", \"Date\": \"${date}\"} "
     sed -i "/.\(.*\)DROP$/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
     ADD_COUNTER=$((ADD_COUNTER+1))
   fi
@@ -49,7 +51,7 @@ for FW in "${FIREWALL[@]}"; do
   done
 
   if ! "$FOUND"; then
-    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed\", \"IP\": \"${FW}\", \"CDN-Status\": \"Removed From CDN\", \"Server-Status\": \"Remove From Firewall\"}"
+    curl -k -XPOST -H "Authorization: ApiKey U1V4YXpvOEJPa3ZWcFFQcFN0SlI6c3Vqd3NUYjVTUjZCRGp0V0s4eFBTQQ==" https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' -d "{\"title\": \"CDNs IPs Changed\", \"IP\": \"${FW}\", \"CDN-Status\": \"Removed From CDN\", \"Server-Status\": \"Remove From Firewall\", \"Hostname\": \"${HOSTNAME}\", \"Date\": \"${date}\"} "
     removable_ip=`echo "${FW}" | awk -F "/" '{print $1}'`
     sed -i "/.\(.*\) ${removable_ip}/d" /etc/iptables/rules.v4
     REMOVE_COUNTER=$((REMOVE_COUNTER+1))
