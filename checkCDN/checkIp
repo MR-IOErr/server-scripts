@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Checking CDN's IPs VS Server's Firewall IPs"
 
 cdn="$(curl -sL https://www.arvancloud.ir/en/ips.txt)"
@@ -34,11 +35,13 @@ for cdn in "${CDN[@]}"; do
     fi
   done
 
-  if ! "$FOUND"; then
-    curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
-    -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"New IP Added To CDN ${cdn}\", \"Server-Status\": \"New IP Added To Firewall ${cdn}\"} "
-    sed -i "/.\(.*\)DROP$/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
-    ADD_COUNTER=$((ADD_COUNTER+1))
+  if ! $FOUND; then
+    if [[ "${cdn}" != "31.214.174.77" && "${cdn}" != "172.17.0.0/16" ]]; then
+      curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
+      -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"New IP Added To CDN ${cdn}\", \"Server-Status\": \"New IP Added To Firewall ${cdn}\"} "
+      sed -i "/-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
+      ADD_COUNTER=$((ADD_COUNTER+1))
+    fi
   fi
 done
 
@@ -51,19 +54,18 @@ for FW in "${FIREWALL[@]}"; do
     fi
   done
 
-  if ! "$FOUND"; then
-    curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
-    -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"IP Removed From CDN ${FW}\", \"Server-Status\": \"IP Removed From Firewall ${FW}\"} "
-    removable_ip=`echo "${FW}" | awk -F "/" '{print $1}'`
-    sed -i "/.\(.*\) ${removable_ip}/d" /etc/iptables/rules.v4
-    REMOVE_COUNTER=$((REMOVE_COUNTER+1))
+  if ! $FOUND; then
+    if [[ "${FW}" != "31.214.174.77" && "${FW}" != "172.17.0.0/16" ]]; then
+      removable_ip=$(echo "${FW}" | awk -F "/" '{print $1}')
+      curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
+      -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"IP Removed From CDN ${FW}\", \"Server-Status\": \"IP Removed From Firewall ${FW}\"} "
+      sed -i "/-A INPUT -s ${removable_ip}/d" /etc/iptables/rules.v4
+      REMOVE_COUNTER=$((REMOVE_COUNTER+1))
+    fi
   fi
 done
 
 # If any changes were made, restart iptables
 if [ $ADD_COUNTER -gt 0 ] || [ $REMOVE_COUNTER -gt 0 ]; then
-
-  # echo "Changes detected. Restarting iptables service."
   iptables-restore < /etc/iptables/rules.v4
-
 fi
