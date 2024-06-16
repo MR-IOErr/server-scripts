@@ -1,10 +1,9 @@
 #!/bin/bash
-
 echo "Checking CDN's IPs VS Server's Firewall IPs"
 
 cdn="$(curl -sL https://www.arvancloud.ir/en/ips.txt)"
 
-fw="$(cat /etc/iptables/rules.v4 | awk '{print $4}' | awk -F '[^0-9]*' '$1' | sed '/127.\(.*\)/d')"
+fw="$(cat /etc/iptables/rules.v4 | awk '{print $4}' | awk -F '[^0-9]*' '$1' | sed '/127.\(.*\)/d' | sed '/172.17.\(.*\)/d'| sed '/213.233.178.43/d' | sed '/185.255.89.178/d')"
 
 date=$(date +"%a %b %d %I:%M:%S %Y")
 
@@ -36,10 +35,10 @@ for cdn in "${CDN[@]}"; do
   done
 
   if ! $FOUND; then
-    if [[ "${cdn}" != "31.214.174.77" && "${cdn}" != "172.17.0.0/16" ]]; then
+    if [[ "${cdn}" != "31.214.174.64/28" ]]; then
       curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
       -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"New IP Added To CDN ${cdn}\", \"Server-Status\": \"New IP Added To Firewall ${cdn}\"} "
-      sed -i "/-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT" /etc/iptables/rules.v4
+      sed -i "/-A INPUT -j DROP\(\s.*\)\?$/i -A INPUT -s ${cdn} -p tcp -m tcp --dport 443 -m state --state NEW -m comment --comment 'HTTPS-Access-From-Arvan' -j ACCEPT" /etc/iptables/rules.v4
       ADD_COUNTER=$((ADD_COUNTER+1))
     fi
   fi
@@ -55,7 +54,7 @@ for FW in "${FIREWALL[@]}"; do
   done
 
   if ! $FOUND; then
-    if [[ "${FW}" != "31.214.174.77" && "${FW}" != "172.17.0.0/16" ]]; then
+    if [[ "${FW}" != "31.214.174.64/28" ]]; then
       removable_ip=$(echo "${FW}" | awk -F "/" '{print $1}')
       curl -k -XPOST -H "Authorization: ApiKey " https://metrics-api.nxbo.ir/cdn-changes/_doc -H 'Content-Type: application/json' \
       -d "{\"Date\": \"${date}\", \"Hostname\": \"${HOSTNAME}\", \"CDN-Status\": \"IP Removed From CDN ${FW}\", \"Server-Status\": \"IP Removed From Firewall ${FW}\"} "
