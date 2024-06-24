@@ -27,6 +27,8 @@ TRACKED_COINS = [
     'ILV', 'RDNT', 'JST',
     'ELF',
     'NOT',
+    'WOO', 'FET', 'RSR', 'AEVO', 'PEPE', 'OM', 'BICO', 'GALA', 'GAL',
+    'AGLD', 'ETHFI', 'RNDR', 'SKL', 'TRB', 'AGIX',
 ]
 
 
