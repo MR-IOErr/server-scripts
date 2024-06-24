@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import functools
 import json
 import os
 import re
@@ -56,7 +57,26 @@ def upload_to_s3(data, bucket, filename, content_type=None, acl=None):
     )
 
 
+@functools.lru_cache(maxsize=1)
+def get_binance_closed_markets(date_called):
+    assert date_called  # Used as cache expiration key
+    r = requests.get('https://api.binance.com/api/v3/exchangeInfo', timeout=10)
+    data = r.json()
+    closed_markets = []
+    for ticker in data['symbols']:
+        if ticker['status'] != 'BREAK':
+            continue
+        symbol = ticker['symbol']
+        match = re.fullmatch('(?P<src>.*)(USDT|DAI|BTC)', symbol)
+        if not match or match.group('src') not in TRACKED_COINS:
+            continue
+        closed_markets.append(symbol)
+    print('Binance Closed Markets:', closed_markets)
+    return closed_markets
+
+
 def fetch_binance_spot_prices():
+    closed_markets = get_binance_closed_markets(date_called=time.strftime('%Y-%m-%d'))
     r = requests.get('https://api.binance.com/api/v3/ticker/price', timeout=10)
     data = r.json()
     results = []
@@ -64,7 +84,7 @@ def fetch_binance_spot_prices():
     for ticker in data:
         symbol = ticker['symbol']
         match = re.fullmatch('(?P<src>.*)(USDT|DAI|BTC)', symbol)
-        if not match or match.group('src') not in TRACKED_COINS:
+        if not match or match.group('src') not in TRACKED_COINS or symbol in closed_markets:
             continue
         if symbol == 'BTCUSDT':
             btc_price = ticker['price']
