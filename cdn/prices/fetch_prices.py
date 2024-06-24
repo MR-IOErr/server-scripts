@@ -63,7 +63,8 @@ def fetch_binance_spot_prices():
     btc_price = None
     for ticker in data:
         symbol = ticker['symbol']
-        if not re.match(r'.*(USDT|DAI|BTC)$', symbol):
+        match = re.fullmatch('(?P<src>.*)(USDT|DAI|BTC)', symbol)
+        if not match or match.group('src') not in TRACKED_COINS:
             continue
         if symbol == 'BTCUSDT':
             btc_price = ticker['price']
