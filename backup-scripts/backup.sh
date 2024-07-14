@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Load environment variables from .env file
-if [ -f .env ]; then
-  export $(cat .env | grep -v '#' | awk '/=/ {print $1}')
+if [ -f /root/script/full-backup/.env ]; then
+  export $(cat /root/script/full-backup/.env | grep -v '#' | awk '/=/ {print $1}')
 fi
 
 # Function to backup MySQL database
@@ -66,12 +66,12 @@ backup_mysql $ACADEMY_DB_NAME $ACADEMY_DB_USER $ACADEMY_DB_PASSWORD $ACADEMY_BUC
 
 # Nginx backups
 
-#backup_directory "/etc/nginx/sites-enabled/academy" $NGINX_ACADEMY_BUCKET $NGINX_ENCRYPTION_PASSWORD $NGINX_ACADEMY_AWS_ACCESS_KEY_ID $NGINX_ACADEMY_AWS_SECRET_ACCESS_KEY "nginx"
-#backup_directory "/etc/nginx/sites-enabled/help" $NGINX_HELP_BUCKET $NGINX_ENCRYPTION_PASSWORD $NGINX_HELP_AWS_ACCESS_KEY_ID $NGINX_HELP_AWS_SECRET_ACCESS_KEY "nginx"
+backup_directory "/etc/nginx/sites-enabled/academy" $NGINX_ACADEMY_BUCKET $NGINX_ENCRYPTION_PASSWORD $NGINX_ACADEMY_AWS_ACCESS_KEY_ID $NGINX_ACADEMY_AWS_SECRET_ACCESS_KEY "nginx"
+backup_directory "/etc/nginx/sites-enabled/help" $NGINX_HELP_BUCKET $NGINX_ENCRYPTION_PASSWORD $NGINX_HELP_AWS_ACCESS_KEY_ID $NGINX_HELP_AWS_SECRET_ACCESS_KEY "nginx"
 
 # HTML backups
 
-#backup_directory "/var/www/html/help" $HTML_HELP_BUCKET $HTML_ENCRYPTION_PASSWORD $HTML_HELP_AWS_ACCESS_KEY_ID $HTML_HELP_AWS_SECRET_ACCESS_KEY "html"
-#backup_directory "/var/www/html/mag" $HTML_MAG_BUCKET $HTML_ENCRYPTION_PASSWORD $HTML_MAG_AWS_ACCESS_KEY_ID $HTML_MAG_AWS_SECRET_ACCESS_KEY "html"
+backup_directory "/var/www/html/help" $HTML_HELP_BUCKET $HTML_ENCRYPTION_PASSWORD $HTML_HELP_AWS_ACCESS_KEY_ID $HTML_HELP_AWS_SECRET_ACCESS_KEY "html"
+backup_directory "/var/www/html/mag" $HTML_MAG_BUCKET $HTML_ENCRYPTION_PASSWORD $HTML_MAG_AWS_ACCESS_KEY_ID $HTML_MAG_AWS_SECRET_ACCESS_KEY "html"
 
 echo "All backups completed."
