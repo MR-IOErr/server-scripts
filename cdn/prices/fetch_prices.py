@@ -22,7 +22,7 @@ TRACKED_COINS = [
     'FLR', 'LRC', 'COMP', 'BAL', 'ENS', 'SUSHI', 'LPT',
     'GLM', 'API3', 'ONE', 'DAO', 'CVC', 'NMR', 'STORJ',
     'SNT', 'SLP', 'ANT', 'ZRX', 'IMX', 'EGLD', 'BLUR',
-    'T', 'CELR', 'ARB', '1INCH', 'FLOKI', 'BABYDOGE', 'NFT', 'BTT',
+    'T', 'CELR', 'ARB', '1INCH', 'FLOKI', 'BABYDOGE', 'NFT', 'BTTC',
     'MAGIC', 'GMX', 'TON', 'BAND', 'CVX', 'MDT', 'SSV',
     'WLD', 'OMG',
     'ILV', 'RDNT', 'JST',
@@ -86,6 +86,8 @@ def fetch_binance_spot_prices():
         match = re.fullmatch('(?P<src>.*)(USDT|DAI|BTC)', symbol)
         if not match or match.group('src') not in TRACKED_COINS or symbol in closed_markets:
             continue
+        if symbol == 'BTTCUSDT':
+            results.append({'symbol': 'BTTUSDT', 'price': ticker['price']})
         if symbol == 'BTCUSDT':
             btc_price = ticker['price']
         results.append(ticker)
@@ -145,13 +147,13 @@ def fetch_okx_spot_prices():
 def fetch_prices(source):
     if source == 'binance-spot':
         runner = fetch_binance_spot_prices
-        wait = 3
+        wait = 15
     elif source == 'binance-futures':
         runner = fetch_binance_futures_prices
-        wait = 2
+        wait = 10
     elif source == 'okx-spot':
         runner = fetch_okx_spot_prices
-        wait = 3
+        wait = 15
     else:
         runner = lambda: print('Unknown source!')
         wait = 60
