@@ -29,7 +29,7 @@ TRACKED_COINS = [
     'ELF',
     'NOT',
     'WOO', 'FET', 'RSR', 'AEVO', 'PEPE', 'OM', 'BICO', 'GALA', 'GAL',
-    'AGLD', 'ETHFI', 'RNDR', 'SKL', 'TRB', 'AGIX', 'G', 'ONDO',
+    'AGLD', 'ETHFI', 'RENDER', 'SKL', 'TRB', 'AGIX', 'G', 'ONDO',
 ]
 
 
