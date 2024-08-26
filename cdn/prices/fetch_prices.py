@@ -24,12 +24,10 @@ TRACKED_COINS = [
     'SNT', 'SLP', 'ANT', 'ZRX', 'IMX', 'EGLD', 'BLUR',
     'T', 'CELR', 'ARB', '1INCH', 'FLOKI', 'BABYDOGE', 'NFT', 'BTTC',
     'MAGIC', 'GMX', 'TON', 'BAND', 'CVX', 'MDT', 'SSV',
-    'WLD', 'OMG',
-    'ILV', 'RDNT', 'JST',
-    'ELF',
-    'NOT',
+    'WLD', 'OMG', 'ILV', 'RDNT', 'JST', 'ELF', 'NOT',
     'WOO', 'FET', 'RSR', 'AEVO', 'PEPE', 'OM', 'BICO', 'GALA', 'GAL',
     'AGLD', 'ETHFI', 'RENDER', 'SKL', 'TRB', 'AGIX', 'G', 'ONDO',
+    'DOGS',
 ]
 
 
