@@ -14,7 +14,7 @@ TRACKED_COINS = [
     'BTC', 'ETH', 'LTC', 'XRP', 'BCH',
     'BNB', 'EOS', 'XLM', 'ETC', 'TRX', 'DOGE',
     'UNI', 'DAI', 'LINK', 'DOT', 'AAVE', 'ADA', 'SHIB',
-    'FTM', 'MATIC', 'AXS', 'MANA', 'SAND', 'AVAX', 'MKR',
+    'FTM', 'POL', 'AXS', 'MANA', 'SAND', 'AVAX', 'MKR',
     'GMT', 'USDC', 'SOL', 'ATOM', 'BAT', 'GRT', 'NEAR',
     'APE', 'CHZ', 'QNT', 'XMR', 'BUSD', 'ALGO',
     'HBAR', 'YFI', 'SNX', 'ENJ', 'CRV',
