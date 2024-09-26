@@ -128,6 +128,8 @@ def fetch_okx_spot_prices():
         if dst != 'USDT' or src not in TRACKED_COINS:
             continue
         price = ticker['last']
+        if not price:
+            continue
         if src == 'BTC':
             btc_price = price
         results.append({
