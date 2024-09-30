@@ -27,7 +27,7 @@ TRACKED_COINS = [
     'WLD', 'OMG', 'ILV', 'RDNT', 'JST', 'ELF', 'NOT',
     'WOO', 'FET', 'RSR', 'AEVO', 'PEPE', 'OM', 'BICO', 'GALA', 'GAL',
     'AGLD', 'ETHFI', 'RENDER', 'SKL', 'TRB', 'AGIX', 'G', 'ONDO',
-    'DOGS', 'CATI', 'HMSTR', 'UMA', 'MEME', 'ZRO'
+    'DOGS', 'CATI', 'HMSTR', 'UMA', 'MEME', 'ZRO', 'PAXG', 'XAUT', 'EIGEN',
 ]
 
 
