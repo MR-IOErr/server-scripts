@@ -28,6 +28,8 @@ TRACKED_COINS = [
     'WOO', 'FET', 'RSR', 'AEVO', 'PEPE', 'OM', 'BICO', 'GALA', 'GAL',
     'AGLD', 'ETHFI', 'RENDER', 'SKL', 'TRB', 'AGIX', 'G', 'ONDO',
     'DOGS', 'CATI', 'HMSTR', 'UMA', 'MEME', 'ZRO', 'PAXG', 'XAUT', 'EIGEN',
+    'ANKR', 'ENA', 'PENDLE', 'JASMY', 'SUPER', 'BNX',
+    'CAKE', 'HOT', 'EDU', 'SAFE',
 ]
 
 
