@@ -26,7 +26,7 @@ backup_mysql() {
   aws configure set aws_access_key_id $aws_access_key_id
   aws configure set aws_secret_access_key $aws_secret_access_key
 
-  aws s3 cp --endpoint-url https://api-s3.nxbo.ir /tmp/$backup_filename.enc s3://$bucket_name/$backup_filename.enc
+  aws s3 cp --endpoint-url https://s3 /tmp/$backup_filename.enc s3://$bucket_name/$backup_filename.enc
 
   rm /tmp/$backup_filename.sql /tmp/$backup_filename.tar.xz /tmp/$backup_filename.enc
   echo "MySQL backup for $db_name completed."
@@ -52,7 +52,7 @@ backup_directory() {
   aws configure set aws_access_key_id $aws_access_key_id
   aws configure set aws_secret_access_key $aws_secret_access_key
 
-  aws s3 cp --endpoint-url https://api-s3.nxbo.ir /tmp/$backup_filename.enc s3://$bucket_name/$backup_filename.enc
+  aws s3 cp --endpoint-url https://s3 /tmp/$backup_filename.enc s3://$bucket_name/$backup_filename.enc
 
   rm /tmp/$backup_filename.tar.xz /tmp/$backup_filename.enc
   echo "Backup of $src_dir completed."
